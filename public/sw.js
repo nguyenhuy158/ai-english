@@ -1,4 +1,4 @@
-const CACHE_NAME = "ai-english-shell-v1";
+const CACHE_NAME = "ai-english-shell-v2";
 const SHELL_URLS = ["/", "/manifest.json", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (event) => {
