@@ -1,4 +1,4 @@
-# stitch-learn-ai
+# ai-english
 
 Cloudflare Worker (full-stack): serves static frontend assets + backend API.
 
