@@ -33,13 +33,15 @@ export async function getCurrentUser(
 
   try {
     const payload = await sessionPort.verify(token);
-    const user = await userRepository.findById(payload.id);
+    const [user, days] = await Promise.all([
+      userRepository.findById(payload.id),
+      userRepository.listActivityDays(payload.id, HISTORY_DAYS)
+    ]);
     if (user) {
       // Read-only on purpose. This used to bump the streak on every call, so
       // merely opening the app counted as a day of learning; only the actions
       // in recordLearningActivity() do that now.
       const today = localDate(now);
-      const days = await userRepository.listActivityDays(payload.id, HISTORY_DAYS);
       user.streak = computeStreak(days, today);
       user.week = weekProgress(days, today);
       user.last_active_date = days[0] || null;
