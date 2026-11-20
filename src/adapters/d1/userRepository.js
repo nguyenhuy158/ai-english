@@ -37,8 +37,10 @@ export function createD1UserRepository(db) {
     async updateStreak(id, { streak, last_active_date }) {
       await db.prepare("UPDATE users SET streak = ?, last_active_date = ? WHERE id = ?").bind(streak, last_active_date, id).run();
     },
+    /** Resolves to true only when this call added the day (false if it was already recorded). */
     async recordActivityDay(id, day) {
-      await db.prepare("INSERT OR IGNORE INTO activity_days (user_id, day) VALUES (?, ?)").bind(id, day).run();
+      const result = await db.prepare("INSERT OR IGNORE INTO activity_days (user_id, day) VALUES (?, ?)").bind(id, day).run();
+      return result.meta.changes > 0;
     },
     /** Days the user actually learned on, newest first. */
     async listActivityDays(id, limit) {

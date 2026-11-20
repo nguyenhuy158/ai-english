@@ -15,7 +15,9 @@ export async function recordLearningActivity({ userId }, { userRepository }, now
   if (!userId) return;
   try {
     const today = localDate(now);
-    await userRepository.recordActivityDay(userId, today);
+    const added = await userRepository.recordActivityDay(userId, today);
+    // Day already counted: the streak cannot change, so skip the 400-row read and the update.
+    if (added === false) return;
     // users.streak stays as a denormalised copy so the rankings query can sort
     // on it without recomputing every player's streak.
     const days = await userRepository.listActivityDays(userId, HISTORY_DAYS);
