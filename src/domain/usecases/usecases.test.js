@@ -517,6 +517,18 @@ test("recordLearningActivity: ghi ngay + cap nhat streak, loi thi nuot, thieu us
   await recordLearningActivity({ userId: "u1" }, { userRepository: broken }, NOW); // khong duoc throw
 });
 
+test("recordLearningActivity: ngay da ghi roi thi bo qua doc lich su va cap nhat streak", async () => {
+  const repo = fakeUserRepo({ recordActivityDay: async () => false });
+  let listed = 0;
+  repo.listActivityDays = async () => {
+    listed++;
+    return [TODAY];
+  };
+  await recordLearningActivity({ userId: "u1" }, { userRepository: repo }, NOW);
+  assert.equal(listed, 0);
+  assert.deepEqual(repo.calls.streaks, []);
+});
+
 // ---- spaced repetition ----
 
 test("scheduleReview: SM-2 dung cong thuc", () => {
